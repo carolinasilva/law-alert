@@ -1,0 +1,8 @@
+{
+  "name": "law-alert-app",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular",
+  "id": "e4f6a866"
+}
