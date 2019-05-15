@@ -16,6 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AuthGuard } from './services/user/auth.guard';
 import { MenuItemComponent } from './menu-item/menu-item.component';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
     AngularFirestoreModule, // imports firebase/firestore
     AngularFireAuthModule, // imports firebase/auth
     AngularFireStorageModule,    
+    AngularFireDatabaseModule,
    ],
   providers: [
     StatusBar,

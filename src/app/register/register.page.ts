@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { User } from '../models/User';
 
 @Component({
   selector: 'app-register',
@@ -27,8 +29,9 @@ export class RegisterPage implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -48,8 +51,16 @@ export class RegisterPage implements OnInit {
     this.authService.doRegister(value)
      .then(res => {
        console.log(res);
-       this.errorMessage = "";
-       this.successMessage = "Your account has been created. Please log in.";
+       let user: User = {
+         key: res.user.uid,
+         email: res.user.email,
+         premiumAccount: false,
+         admin: false
+       }
+       this.userService.add(user).then(result =>{
+        this.errorMessage = "";
+        this.successMessage = "Your account has been created. Please log in.";
+       });          
      }, err => {
        console.log(err);
        this.errorMessage = err.message;

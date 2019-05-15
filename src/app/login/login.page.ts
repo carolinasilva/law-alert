@@ -3,6 +3,7 @@ import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms'
 import { AuthService } from '../services/auth.service';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -27,17 +28,12 @@ export class LoginPage implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private formBuilder: FormBuilder,
     private router: Router,
   ) { }
 
   ngOnInit() {
-
-    if((window.localStorage.getItem('logedUser') === "undefined" || window.localStorage.getItem('logedUser') === null)) {
-      this.router.navigate(["/login"]);
-    } else {
-      this.router.navigate(["/tabs/changes"]);
-    }
 
     this.validations_form = this.formBuilder.group({
       email: new FormControl('', Validators.compose([
@@ -54,10 +50,16 @@ export class LoginPage implements OnInit {
   tryLogin(value){
     this.authService.doLogin(value)
     .then(res => {
-      window.localStorage.setItem('logedUser', res);
+      //
+      console.log(res.user.uid);
+      this.userService.get(res.user.uid).then(user => 
+        console.log(user)
+        );
+      window.localStorage.setItem('loggedUser', res);
       this.router.navigate(["/tabs/changes"]);
     }, err => {
       this.errorMessage = err.message;
+      
       console.log(err)
     })
   }

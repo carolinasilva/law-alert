@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase/app';
 import { AuthService } from '../auth.service';
+import { MenuController } from '@ionic/angular';
 // import 'firebase/auth';
 
 @Injectable({
@@ -16,6 +17,7 @@ import { AuthService } from '../auth.service';
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
+    private menuCtrl: MenuController,
     private auth: AuthService) {}
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -24,9 +26,11 @@ export class AuthGuard implements CanActivate {
     return new Promise((resolve, reject) => {
       firebase.auth().onAuthStateChanged((user: firebase.User) => {
         if (user) {
+          this.menuCtrl.enable(true);
           resolve(true);
         } else {        
           this.router.navigate(['/login']);
+          this.menuCtrl.enable(false);
           resolve(false);
         }
       });
