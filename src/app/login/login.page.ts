@@ -50,13 +50,13 @@ export class LoginPage implements OnInit {
   tryLogin(value){
     this.authService.doLogin(value)
     .then(res => {
-      //
-      console.log(res.user.uid);
-      this.userService.get(res.user.uid).then(user => 
-        console.log(user)
-        );
-      window.localStorage.setItem('loggedUser', res);
-      this.router.navigate(["/tabs/changes"]);
+      window.localStorage.setItem('loggedUser', JSON.stringify(res));
+
+      this.userService.get(res.user.uid).then(user => {
+        window.localStorage.setItem('userData', JSON.stringify(user))
+        this.router.navigate(["/tabs/changes"]);
+      });
+      
     }, err => {
       this.errorMessage = err.message;
       

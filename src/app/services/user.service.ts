@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
-import * as firebase from 'firebase/app';
 import 'rxjs/Rx';
-import { snapshotToObject } from '../models/SnapshotToObject';
 import { User } from '../models/User';
+import { AngularFirestore } from '@angular/fire/firestore';
+import 'rxjs/add/operator/toPromise';
+import { Observable } from 'rxjs/Rx';
 
 @Injectable({
     providedIn: 'root'
@@ -13,37 +13,60 @@ export class UserService {
     private PATH = 'userProfile/';
 
     constructor(
-        private db: AngularFireDatabase
+        private db: AngularFireDatabase,
+        private firestore: AngularFirestore
     ){}
 
-    get(key: string): Promise<User> {
-        return new Promise(function(resolve, reject) {
-            firebase.database().ref(this.PATH+key).once('value').then(function(snapshot) {
-                console.log(snapshot);
-                if(snapshot.val())
-                {
-                    let user: User = {
-                        admin: snapshot.val().admin ? snapshot.val().admin : false,
-                        email: snapshot.val().email,
-                        name: snapshot.val().name,
-                        premiumAccount: snapshot.val().premiumAccount ? snapshot.val().premiumAccount : false,
-                        key: snapshot.val().key
-                    };
-                    resolve(user);
-                }
-                else
-                    resolve(null);
-            }).catch(err => {
-                resolve(null);
-            });
-          });        
+    get(key: string): Promise<User> {     
+        return new Promise((resolve, reject) =>{
+            this.firestore
+                .collection("userProfile")
+                .doc(key)
+                .get()
+                .toPromise().then(doc => {
+                    if (!doc.exists) {
+                        resolve(null);
+                    } else {
+                        let user: User = {
+                            admin: doc.data().admin ? doc.data().admin : false,
+                            email: doc.data().email,
+                            name: doc.data().name,
+                            premiumAccount: doc.data().premiumAccount ? doc.data().premiumAccount : false,
+                            key: doc.data().key
+                        };
+                        resolve(user);
+                    }
+                  }, err => {
+                            console.log(err)
+                          });
+        });        
       }
 
-    add(user: User): Promise<string>
+    list(): Observable<any[]>
     {
-        return new Promise((resolve, reject) => {
-            this.db.list(this.PATH).update(user.key, user).then(() => {resolve()});
-          });
+        return this.firestore.collection("userProfile").snapshotChanges();
+    }
+
+    addUpdate(user: User): Promise<string>
+    {
+        return new Promise((resolve, reject) =>{
+            this.firestore
+                .collection("userProfile")
+                .doc(user.key)
+                .set(user)
+                .then(() => {resolve()}, err => reject(err));
+        });
+    }
+
+    delete(user: User): Promise<string>
+    {
+        return new Promise((resolve, reject) =>{
+            this.firestore
+                .collection("userProfile")
+                .doc(user.key)
+                .delete()
+                .then(() => {resolve()}, err => reject(err));
+        });
     }
 }
 

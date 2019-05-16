@@ -43,21 +43,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.router.events.subscribe((event: RouterEvent) => {
-    //   if (event instanceof NavigationEnd && event.url === '/login') {
-    //     console.log('login 1');
-    //   }
-    //   else {
-    //     if((window.localStorage.getItem('logedUser') === "undefined" || window.localStorage.getItem('logedUser') === null)) {
-    //       //this.router.navigate(["/login"]);
-    //       this.menuCtrl.enable(false);
-    //     } else {
-    //       this.router.navigate(["/tabs/changes"]);
-    //     }
-    //     this.menuCtrl.enable(true);
-    //   }
-    // });
-
     this.router.events.subscribe((event: RouterEvent) => {
       if (event instanceof NavigationEnd) {
         this.pages.map( p => {

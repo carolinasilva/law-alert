@@ -57,7 +57,7 @@ export class RegisterPage implements OnInit {
          premiumAccount: false,
          admin: false
        }
-       this.userService.add(user).then(result =>{
+       this.userService.addUpdate(user).then(result =>{
         this.errorMessage = "";
         this.successMessage = "Your account has been created. Please log in.";
        });          
